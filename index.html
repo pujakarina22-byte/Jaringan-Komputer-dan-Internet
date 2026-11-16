@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MPI Informatika Kelas X — Jaringan Komputer & Internet</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Poppins', 'system-ui', 'sans-serif'],
+      },
+      colors: {
+        slatebg: '#f8fafc',
+        cyanacc: '#06b6d4',
+        emeraldacc: '#10b981',
+        indigoacc: '#6366f1',
+        amberacc: '#f59e0b',
+        coralacc: '#ef4444',
+      },
+      boxShadow: {
+        soft: '0 4px 20px -4px rgba(15,23,42,0.08), 0 2px 8px -2px rgba(15,23,42,0.04)',
+        card: '0 8px 30px -8px rgba(6,182,212,0.15), 0 4px 12px -4px rgba(15,23,42,0.06)',
+      }
+    }
+  }
+}
+</script>
+
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: #f8fafc; }
+  .font-display { font-family: 'Poppins', sans-serif; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: #f1f5f9; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeIn 0.35s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .subtab-content { display: none; }
+  .subtab-content.active { display: block; animation: fadeIn 0.3s ease; }
+  .option-card { transition: all 0.2s ease; cursor: pointer; }
+  .option-card:hover { transform: translateY(-2px); }
+  .option-card.selected {
+    border-color: #06b6d4 !important;
+    background: linear-gradient(135deg, #ecfeff 0%, #f0fdfa 100%);
+    box-shadow: 0 0 0 3px rgba(6,182,212,0.15);
+  }
+  .option-card.correct-answer { border-color: #10b981 !important; background: #ecfdf5 !important; }
+  .option-card.wrong-answer { border-color: #ef4444 !important; background: #fef2f2 !important; }
+  .toggle-switch { width: 56px; height: 30px; border-radius: 999px; position: relative; transition: background 0.3s; cursor: pointer; }
+  .toggle-switch .knob { width: 24px; height: 24px; background: white; border-radius: 50%; position: absolute; top: 3px; left: 3px; transition: transform 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+  .toggle-switch.on { background: #10b981; }
+  .toggle-switch.on .knob { transform: translateX(26px); }
+  .toggle-switch.off { background: #cbd5e1; }
+  input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 4px; outline: none; }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 22px; height: 22px;
+    border-radius: 50%; background: #06b6d4; cursor: pointer;
+    box-shadow: 0 2px 8px rgba(6,182,212,0.4); border: 3px solid white;
+  }
+  input[type=range]::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: #06b6d4; cursor: pointer; box-shadow: 0 2px 8px rgba(6,182,212,0.4); border: 3px solid white; }
+  .signal-bar { transition: all 0.3s ease; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 100; padding: 1rem; }
+  .modal-overlay.show { display: flex; animation: fadeIn 0.25s ease; }
+  .modal-content { animation: slideUp 0.3s ease; }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(30px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  @media print { .no-print { display: none !important; } body { background: white; } }
+  .nav-tab.active { background: linear-gradient(135deg, #06b6d4, #6366f1); color: white !important; box-shadow: 0 4px 12px rgba(6,182,212,0.3); }
+  .spinner { border: 3px solid #e2e8f0; border-top-color: #06b6d4; border-radius: 50%; width: 20px; height: 20px; animation: spin 0.8s linear infinite; display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  /* Contoh sehari-hari card */
+  .real-card {
+    background: linear-gradient(135deg, #fffbeb 0%, #fff 100%);
+    border-left: 4px solid #f59e0b;
+  }
+  .real-card .real-badge {
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.5px;
+  }
+  /* Analogy box */
+  .analogy-box {
+    background: linear-gradient(135deg, #f0fdfa 0%, #ecfeff 100%);
+    border: 1px dashed #06b6d4;
+    border-radius: 12px;
+  }
+  /* Accordion */
+  .acc-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .acc-content.open { max-height: 800px; }
+  .acc-chevron { transition: transform 0.3s ease; }
+  .acc-chevron.open { transform: rotate(180deg); }
+</style>
+</head>
+<body class="text-slate-800 antialiased">
+
+<header class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-soft no-print">
+  <div class="max-w-7xl mx-auto px-3 sm:px-6">
+    <div class="flex items-center justify-between h-16 gap-2">
+      <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-500 flex items-center justify-center text-white shadow-md">
+          <i class="fa-solid fa-network-wired text-sm sm:text-base"></i>
+        </div>
+        <div class="hidden sm:block">
+          <h1 class="font-display font-bold text-sm sm:text-base text-slate-800 leading-tight">Jaringan & Internet</h1>
+          <p class="text-[10px] sm:text-xs text-slate-500 font-medium">Informatika Kelas X</p>
+        </div>
+      </div>
+      <nav class="flex items-center gap-1 sm:gap-2 overflow-x-auto">
+        <button data-tab="modul" class="nav-tab active flex items-center gap-1.5 px-2.5 sm:px-4 py-2 rounded-lg text-[11px] sm:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition whitespace-nowrap">
+          <i class="fa-solid fa-book-open"></i><span class="hidden sm:inline">Modul</span>
+        </button>
+        <button data-tab="lab" class="nav-tab flex items-center gap-1.5 px-2.5 sm:px-4 py-2 rounded-lg text-[11px] sm:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition whitespace-nowrap">
+          <i class="fa-solid fa-flask"></i><span class="hidden sm:inline">Lab Maya</span>
+        </button>
+        <button data-tab="kuis" class="nav-tab flex items-center gap-1.5 px-2.5 sm:px-4 py-2 rounded-lg text-[11px] sm:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition whitespace-nowrap">
+          <i class="fa-solid fa-clipboard-question"></i><span class="hidden sm:inline">Kuis</span>
+        </button>
+        <button data-tab="lkpd" class="nav-tab flex items-center gap-1.5 px-2.5 sm:px-4 py-2 rounded-lg text-[11px] sm:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition whitespace-nowrap">
+          <i class="fa-solid fa-file-pen"></i><span class="hidden sm:inline">LKPD</span>
+        </button>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main class="pt-20 pb-16 max-w-7xl mx-auto px-3 sm:px-6">
+
+  <!-- ==================== TAB 1: MODUL ==================== -->
+  <section id="tab-modul" class="tab-content active">
+    <div class="rounded-2xl bg-gradient-to-br from-cyan-500 via-cyan-600 to-indigo-600 p-6 sm:p-10 text-white mb-6 shadow-card overflow-hidden relative">
+      <div class="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-white/10"></div>
+      <div class="absolute -right-20 bottom-0 w-64 h-64 rounded-full bg-white/5"></div>
+      <div class="relative">
+        <span class="inline-block px-3 py-1 rounded-full bg-white/20 text-xs font-semibold mb-3 backdrop-blur"><i class="fa-solid fa-graduation-cap mr-1"></i> Modul Pembelajaran</span>
+        <h2 class="font-display text-2xl sm:text-3xl font-bold mb-2">Jaringan Komputer & Internet</h2>
+        <p class="text-cyan-50 text-sm sm:text-base max-w-2xl">Dari Wi-Fi rumah sampai BTS 5G — pelajari cara perangkat saling terhubung, bagaimana data mengalir, dan cara melindungi diri saat online.</p>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mb-5 no-print">
+      <button data-subtab="sub1" class="subtab-btn active px-4 py-2.5 rounded-xl text-sm font-semibold bg-white text-cyan-600 shadow-soft border-2 border-cyan-500 transition">
+        <i class="fa-solid fa-network-wired mr-1.5"></i>1. Jaringan Lokal & Internet
+      </button>
+      <button data-subtab="sub2" class="subtab-btn px-4 py-2.5 rounded-xl text-sm font-semibold bg-white text-slate-600 shadow-soft border-2 border-transparent hover:border-slate-300 transition">
+        <i class="fa-solid fa-mobile-screen-button mr-1.5"></i>2. Komunikasi Data Ponsel
+      </button>
+      <button data-subtab="sub3" class="subtab-btn px-4 py-2.5 rounded-xl text-sm font-semibold bg-white text-slate-600 shadow-soft border-2 border-transparent hover:border-slate-300 transition">
+        <i class="fa-solid fa-shield-halved mr-1.5"></i>3. Proteksi Data
+      </button>
+    </div>
+
+    <!-- ==================== SUB 1 ==================== -->
+    <div id="sub1" class="subtab-content active space-y-5">
+
+      <!-- Analogi -->
+      <div class="analogy-box p-5">
+        <p class="text-sm font-bold text-cyan-800 mb-2"><i class="fa-solid fa-lightbulb mr-1"></i>Analogi: Jaringan sebagai Sistem Jalan Raya</p>
+        <p class="text-sm text-slate-700 leading-relaxed">Bayangkan <b>LAN</b> seperti kompleks perumahan — jalan kecil yang menghubungkan rumah-rumah tetangga. <b>Internet</b> seperti jalan tol nasional yang menghubungkan semua kompleks se-Indonesia. <b>Router</b> adalah gerbang tol, <b>Switch</b> adalah pertigaan di dalam kompleks, dan <b>IP Address</b> adalah alamat rumah Anda.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-5">
+        <div class="bg-white rounded-2xl p-6 shadow-card border border-slate-100">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-11 h-11 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center"><i class="fa-solid fa-house-signal text-lg"></i></div>
+            <h3 class="font-display font-bold text-lg">LAN vs Internet</h3>
+          </div>
+          <ul class="space-y-3 text-sm text-slate-600">
+            <li class="flex gap-2"><i class="fa-solid fa-circle-check text-cyan-500 mt-0.5"></i><span><b class="text-slate-800">LAN</b> (Local Area Network): jaringan lokal di satu gedung/ruangan. Cakupan kecil, cepat, dikelola sendiri.</span></li>
+            <li class="flex gap-2"><i class="fa-solid fa-circle-check text-indigo-500 mt-0.5"></i><span><b class="text-slate-800">Internet</b>: jaringan global antar-jaringan (interconnected network) yang menghubungkan miliaran perangkat dengan protokol TCP/IP.</span></li>
+            <li class="flex gap-2"><i class="fa-solid fa-circle-check text-emerald-500 mt-0.5"></i><span>LAN bisa terhubung ke internet melalui <b>router + modem ISP</b>.</span></li>
+          </ul>
+          <div class="real-card rounded-lg p-3 mt-4">
+            <span class="real-badge">CONTOH SEHARI-HARI</span>
+            <p class="text-xs text-slate-700 mt-2"><b>LAN:</b> HP, laptop, dan Smart TV di rumah Anda terhubung ke Wi-Fi yang sama — bisa saling kirim file via AirDrop/ShareIt tanpa internet.<br><b>Internet:</b> Saat Anda scroll TikTok, buka WhatsApp, atau nonton YouTube — data menyeberang ke server di luar negeri.</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-6 shadow-card border border-slate-100">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-11 h-11 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center"><i class="fa-solid fa-address-card text-lg"></i></div>
+            <h3 class="font-display font-bold text-lg">Pengalamatan IP</h3>
+          </div>
+          <div class="space-y-3 text-sm">
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+              <p class="font-semibold text-slate-800 mb-1"><i class="fa-solid fa-lock text-amber-500 mr-1"></i>IP Private (Lokal)</p>
+              <p class="text-slate-600 text-xs">Dipakai di jaringan lokal. Contoh: <code class="bg-white px-1.5 py-0.5 rounded text-cyan-600 font-mono">192.168.x.x</code>, <code class="bg-white px-1.5 py-0.5 rounded text-cyan-600 font-mono">10.x.x.x</code>, <code class="bg-white px-1.5 py-0.5 rounded text-cyan-600 font-mono">172.16–31.x.x</code>. Tidak bisa diakses langsung dari internet.</p>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+              <p class="font-semibold text-slate-800 mb-1"><i class="fa-solid fa-globe text-emerald-500 mr-1"></i>IP Public (Global)</p>
+              <p class="text-slate-600 text-xs">Alamat unik yang bisa diakses dari internet. Diberikan oleh ISP ke router/modem Anda.</p>
+            </div>
+          </div>
+          <div class="real-card rounded-lg p-3 mt-4">
+            <span class="real-badge">CONTOH SEHARI-HARI</span>
+            <p class="text-xs text-slate-700 mt-2"><b>IP Private</b> seperti nomor kamar di asrama — hanya dikenal di dalam asrama (mis. kamar 192.168.1.5). <b>IP Public</b> seperti alamat gedung asrama di Google Maps — bisa ditemukan siapa pun di dunia (mis. 103.47.132.10). Saat Anda kirim paket dari kamar, satpam (router/NAT) mencatat "dari asrama X" agar balasan kembali ke kamar yang benar.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 shadow-card border border-slate-100">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center"><i class="fa-solid fa-diagram-project text-lg"></i></div>
+          <h3 class="font-display font-bold text-lg">Fungsi Router & Switch</h3>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4 text-sm">
+          <div class="p-4 rounded-xl bg-gradient-to-br from-cyan-50 to-white border border-cyan-100">
+            <p class="font-bold text-cyan-700 mb-1"><i class="fa-solid fa-route mr-1"></i>Router</p>
+            <p class="text-slate-600">Menghubungkan <b>jaringan berbeda</b> (LAN ↔ Internet), mengarahkan paket data antar jaringan, dan melakukan NAT (menerjemahkan IP private ke IP public).</p>
+          </div>
+          <div class="p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-white border border-indigo-100">
+            <p class="font-bold text-indigo-700 mb-1"><i class="fa-solid fa-code-branch mr-1"></i>Switch</p>
+            <p class="text-slate-600">Menghubungkan banyak perangkat <b>dalam satu LAN</b>, meneruskan data berdasarkan alamat MAC, dan mengatur lalu lintas dalam jaringan lokal.</p>
+          </div>
+        </div>
+        <div class="real-card rounded-lg p-3 mt-4">
+          <span class="real-badge">CONTOH SEHARI-HARI</span>
+          <p class="text-xs text-slate-700 mt-2"><b>Router:</b> Kotak putih IndiHome di ruang tamu Anda — dialah yang menyambungkan HP Anda ke internet IndiHome. <b>Switch:</b> Kalau Anda pasang 4 laptop di lab komputer dengan satu kabel ke dinding, biasanya ada switch kecil di balik meja untuk membagi koneksi ke 4 laptop tersebut.</p>
+        </div>
+      </div>
+
+      <!-- Jenis jaringan lengkap -->
+      <div class="bg-white rounded-2xl p-6 shadow-card border border-slate-100">
+        <h3 class="font-display font-bold text-lg mb-4 flex items-center gap-2"><i class="fa-solid fa-layer-group text-cyan-500"></i>Jenis Jaringan Berdasarkan Jangkauan</h3>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="p-4 rounded-xl bg-cyan-50 border border-cyan-200">
+            <p class="font-bold text-cyan-700 text-sm mb-1">PAN</p>
+            <p class="text-xs text-slate-600">Personal Area Network — ±10 m. <b>Contoh:</b> Bluetooth HP ke earbuds, Smart Watch ke HP.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+            <p class="font-bold text-emerald-700 text-sm mb-1">LAN</p>
+            <p class="text-xs text-slate-600">Local Area Network — 1 gedung. <b>Contoh:</b> Wi-Fi rumah, jaringan lab sekolah.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-indigo-50 border border-indigo-200">
+            <p class="font-bold text-indigo-700 text-sm mb-1">MAN</p>
+            <p class="text-xs text-slate-600">Metropolitan Area Network — 1 kota. <b>Contoh:</b> Jaringan antar-cabang bank di Surabaya.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-amber-50 border border-amber-200">
+            <p class="font-bold text-amber-700 text-sm mb-1">WAN</p>
+            <p class="text-xs text-slate-600">Wide Area Network — antar-negara. <b>Contoh:</b> Internet, jaringan kantor pusat-cabang lintas negara.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SUB 2 ==================== -->
+    <div id="sub2" class="subtab-content space-y-5">
+
+      <div class="analogy-box p-5">
+        <p class="text-sm font-bold text-cyan-800 mb-2"><i class="fa-solid fa-lightbulb mr-1"></i>Analogi: BTS sebagai Menara Pemandu</p>
+        <p class="text-sm text-slate-700 leading-relaxed">Bayangkan <b>BTS</b> (Base Transceiver Station) seperti menara mercusuar di pelabuhan. HP Anda adalah kapal yang memancarkan sinyal "Halo, saya di sini!" ke mercusuar terdekat. Mercusuar meneruskan pesan Anda ke kantor pusat (operator), lalu ke tujuan akhir. Jika banyak kapal di pelabuhan yang sama, lalu lintas bisa padat — meski sinyal mercusuar tetap kuat.</p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 shadow-card border border-slate-100">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center"><i class="fa-solid fa-tower-cell text-lg"></i></div>
+          <h3 class="font-display font-bold text-lg">Transmisi Data Seluler (3G/4G/5G)</h3>
+        </div>
+        <p class="text-sm text-slate-600 mb-4">Ponsel Anda mengirim/menerima data melalui gelombang radio ke <b>BTS</b> terdekat. BTS terhubung ke jaringan operator, lalu ke internet.</p>
+        <div class="flex items-center justify-between gap-1 p-4 rounded-xl bg-slate-50 border border-slate-200 overflow-x-auto">
+          <div class="text-center shrink-0"><div class="w-12 h-12 mx-auto rounded-lg bg-cyan-500 text-white flex items-center justify-center"><i class="fa-solid fa-mobile-screen"></i></div><p class="text-[10px] mt-1 font-medium">Ponsel</p></div>
+          <i class="fa-solid fa-arrow-right text-cyan-400 shrink-0"></i>
+          <div class="text-center shrink-0"><div class="w-12 h-12 mx-auto rounded-lg bg-indigo-500 text-white flex items-center justify-center"><i class="fa-solid fa-tower-cell"></i></div><p class="text-[10px] mt-1 font-medium">BTS</p></div>
+          <i class="fa-solid fa-arrow-right text-cyan-400 shrink-0"></i>
+          <div class="text-center shrink-0"><div class="w-12 h-12 mx-auto rounded-lg bg-emerald-500 text-white flex items-center justify-center"><i class="fa-solid fa-server"></i></div><p class="text-[10px] mt-1 font-medium">Operator</p></div>
+          <i class="fa-solid fa-arrow-right text-cyan-400 shrink-0"></i>
+          <div class="text-center shrink-0"><div class="w-12 h-12 mx-auto rounded-lg bg-amber-500 text-white flex items-center justify-center"><i class="fa-solid fa-globe"></i></div><p class="text-[10px] mt-1 font-medium">Internet</p></div>
+        </div>
+
+        <!-- Tabel perbandingan generasi -->
+        <div class="overflow-x-auto mt-4">
+          <table class="w-full text-xs sm:text-sm border-collapse">
+            <thead>
+              <tr class="bg-slate-100">
+                <th class="p-2 text-left font-bold text-slate-700 border border-slate-200">Generasi</th>
+                <th class="p-2 text-left font-bold text-slate-700 border border-slate-200">Kecepatan Ideal</th>
+                <th class="p-2 text-left font-bold text-slate-700 border border-slate-200">Contoh Penggunaan</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="p-2 border border-slate-200 font-semibold text-slate-700">3G</td><td class="p-2 border border-slate-200 text-slate-600">± 2–7 Mbps</td><td class="p-2 border border-slate-200 text-slate-600">Chat WhatsApp, buka email, browsing ringan</td></tr>
+              <tr class="bg-slate-50"><td class="p-2 border border-slate-200 font-semibold text-slate-700">4G LTE</td><td class="p-2 border border-slate-200 text-slate-600">± 10–50 Mbps</td><td class="p-2 border border-slate-200 text-slate-600">Streaming YouTube 1080p, video call Zoom</td></tr>
+              <tr><td class="p-2 border border-slate-200 font-semibold text-slate-700">5G</td><td class="p-2 border border-slate-200 text-slate-600">± 100–1000 Mbps</td><td class="p-2 border border-slate-200 text-slate-600">Cloud gaming, streaming 4K, VR/AR</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="real-card rounded-lg p-3 mt-4">
+          <span class="real-badge">CONTOH SEHARI-HARI</span>
+          <p class="text-xs text-slate-700 mt-2">Saat Anda di angkot sambil nonton YouTube 1080p lancar, berarti HP Anda kemungkinan terhubung ke BTS 4G dengan pengguna sedikit. Jika tiba-tiba buffering padahal sinyal 5 bar, bisa jadi BTS sedang "ramai" (jam pulang sekolah).</p>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-5">
+        <div class="bg-white rounded-2xl p-5 shadow-card border border-slate-100">
+          <div class="w-10 h-10 rounded-lg bg-cyan-100 text-cyan-600 flex items-center justify-center mb-3"><i class="fa-solid fa-wifi"></i></div>
+          <h4 class="font-bold text-slate-800 mb-1">Wi-Fi</h4>
+          <p class="text-xs text-slate-600">Koneksi nirkabel lokal via <b>Access Point</b>. Cakupan puluhan meter, cepat, cocok untuk rumah/kantor. Tidak memakai kuota seluler.</p>
+          <div class="real-card rounded-lg p-2.5 mt-3">
+            <span class="real-badge">CONTOH</span>
+            <p class="text-[11px] text-slate-700 mt-1.5">Nonton film di rumah lewat Wi-Fi IndiHome — hemat kuota HP, lebih stabil, tapi terbatas jangkauan rumah.</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 shadow-card border border-slate-100">
+          <div class="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center mb-3"><i class="fa-brands fa-bluetooth-b"></i></div>
+          <h4 class="font-bold text-slate-800 mb-1">Bluetooth</h4>
+          <p class="text-xs text-slate-600">Koneksi jarak sangat dekat (~10 m) untuk perangkat pribadi: earphone, keyboard, transfer file kecil. Hemat daya.</p>
+          <div class="real-card rounded-lg p-2.5 mt-3">
+            <span class="real-badge">CONTOH</span>
+            <p class="text-[11px] text-slate-700 mt-1.5">Dengar lagu pakai TWS earbuds, atau share foto via ShareIt ke teman meja sebelah.</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 shadow-card border border-slate-100">
+          <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center mb-3"><i class="fa-solid fa-share-nodes"></i></div>
+          <h4 class="font-bold text-slate-800 mb-1">Tethering / Hotspot</h4>
+          <p class="text-xs text-slate-600">Membagikan koneksi seluler ponsel ke perangkat lain (laptop, tablet) melalui Wi-Fi/Bluetooth/USB.</p>
+          <div class="real-card rounded-lg p-2.5 mt-3">
+            <span class="real-badge">CONTOH</span>
+            <p class="text-[11px] text-slate-700 mt-1.5">Di kelas saat Wi-Fi sekolah mati, guru mengaktifkan hotspot HP agar laptop bisa tampilkan presentasi.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accordion: fakta menarik -->
+      <div class="bg-white rounded-2xl p-6 shadow-card border border-slate-100">
+        <h3 class="font-display font-bold text-lg mb-3 flex items-center gap-2"><i class="fa-solid fa-circle-info text-indigo-500"></i>Fakta Menarik Seputar Sinyal HP</h3>
+        <div class="space-y-2">
+          <div class="acc-item border border-slate-200 rounded-xl overflow-hidden">
+            <button class="acc-btn w-full flex justify-between items-center p-3 text-left text-sm font-semibold text-slate-700 hover:bg-slate-50">
+              <span><i class="fa-solid fa-question-circle text-cyan-500 mr-2"></i>Mengapa sinyal penuh tapi internet lambat?</span>
+              <i class="fa-solid fa-chevron-down acc-chevron text-slate-400"></i>
+            </button>
+            <div class="acc-content"><div class="p-3 pt-0 text-xs text-slate-600 leading-relaxed">Bar sinyal mengukur kekuatan koneksi HP ↔ BTS, bukan kecepatan. Jika banyak pengguna berbagi satu BTS, bandwidth dibagi-bagi seperti jalan tol yang macet meski Anda sudah di jalur tol.</div></div>
+          </div>
+          <div class="acc-item border border-slate-200 rounded-xl overflow-hidden">
+            <button class="acc-btn w-full flex justify-between items-center p-3 text-left text-sm font-semibold text-slate-700 hover:bg-slate-50">
+              <span><i class="fa-solid fa-question-circle text-cyan-500 mr-2"></i>Mengapa di lift/basement sinyal hilang?</span>
+              <i class="fa-solid fa-chevron-down acc-chevron text-slate-400"></i>
+            </button>
+            <div class="acc-content"><div class="p-3 pt-0 text-xs text-slate-600 leading-relaxed">Gelombang radio sulit menembus beton tebal dan logam. Itulah sebabnya operator memasang "repeater" sinyal di gedung-gedung besar, atau Anda harus naik ke lantai atas.</div></div>
+          </div>
+          <div class="acc-item border border-slate-200 rounded-xl overflow-hidden">
+            <button class="acc-btn w-full flex justify-between items-center p-3 text-left text-sm font-semibold text-slate-700 hover:bg-slate-50">
+              <span><i class="fa-solid fa-question-circle text-cyan-500 mr-2"></i>Mengapa 5G belum merata di Indonesia?</span>
+              <i class="fa-solid fa-chevron-down acc-chevron text-slate-400"></i>
+            </button>
+            <div class="acc-content"><div class="p-3 pt-0 text-xs text-slate-600 leading-relaxed">5G butuh BTS lebih rapat (jarak lebih pendek) dan infrastruktur fiber optic ke setiap BTS. Saat ini baru tersedia di kota-kota besar. Di daerah rural, 4G masih jadi andalan.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SUB 3 ==================== -->
+    <div id="sub3" class="subtab-content space-y-5">
+
+      <div class="analogy-box p-5">
+        <p class="text-sm font-bold text-cyan-800 mb-2"><i class="fa-solid fa-lightbulb mr-1"></i>Analogi: HTTPS sebagai Amplop Tertutup</p>
+        <p class="text-sm text-slate-700 leading-relaxed"><b>HTTP</b> seperti mengirim kartu pos — siapa pun yang memegangnya (operator, penyadap Wi-Fi) bisa membaca isinya. <b>HTTPS</b> seperti mengirim surat dalam <b>amplop tersegel</b> — kurir hanya tahu alamat tujuan, tapi tidak bisa membaca isi surat. Ikon 🔒 di address bar menandakan amplop itu tersegel rapi.</p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 shadow-card border border-slate-100">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center"><i class="fa-solid fa-lock text-lg"></i></div>
+          <h3 class="font-display font-bold text-lg">Enkripsi: HTTP vs HTTPS</h3>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4 text-sm">
+          <div class="p-4 rounded-xl bg-red-50 border-2 border-red-200">
+            <p class="font-bold text-red-600 mb-1"><i class="fa-solid fa-lock-open mr-1"></i>HTTP</p>
+            <p class="text-slate-600">Data dikirim <b>tanpa enkripsi</b>. Bisa disadap di Wi-Fi publik. Jangan masukkan password/data pribadi di situs HTTP!</p>
+          </div>
+          <div class="p-4 rounded-xl bg-emerald-50 border-2 border-emerald-200">
+            <p class="font-bold text-emerald-600 mb-1"><i class="fa-solid fa-lock mr-1"></i>HTTPS</p>
+            <p class="text-slate-600">Data <b>terenkripsi</b> via TLS/SSL. Meski disadap, isi data tidak terbaca. Selalu cek ikon gembok 🔒 di address bar.</p>
+          </div>
+        </div>
+        <div class="real-card rounded-lg p-3 mt-4">
+          <span class="real-badge">CONTOH SEHARI-HARI</span>
+          <p class="text-xs text-slate-700 mt-2">Saat Anda login Instagram, lihat address bar — ada <code>https://</code> dan ikon gembok. Jika sebuah link WhatsApp mengarah ke <code>http://</code> tanpa gembok dan meminta password, itu <b>tanda bahaya</b>. Tutup segera!</p>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-5">
+        <div class="bg-white rounded-2xl p-5 shadow-card border-l-4 border-red-400">
+          <div class="w-10 h-10 rounded-lg bg-red-100 text-red-500 flex items-center justify-center mb-3"><i class="fa-solid fa-user-secret"></i></div>
+          <h4 class="font-bold text-slate-800 mb-1">MitM Attack</h4>
+          <p class="text-xs text-slate-600 mb-2">Penyerang di Wi-Fi publik menyadap komunikasi Anda. Hindari login bank/akun penting di Wi-Fi gratisan.</p>
+          <div class="real-card rounded-lg p-2.5">
+            <span class="real-badge">CONTOH</span>
+            <p class="text-[11px] text-slate-700 mt-1.5">Anda login M-Banking di Wi-Fi kafe. Penyadap yang duduk di meja sebelah bisa merekam password Anda jika situsnya HTTP.</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 shadow-card border-l-4 border-amber-400">
+          <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-500 flex items-center justify-center mb-3"><i class="fa-solid fa-fish-fins"></i></div>
+          <h4 class="font-bold text-slate-800 mb-1">Phishing</h4>
+          <p class="text-xs text-slate-600 mb-2">Tautan/situs palsu yang menipu Anda agar menyerahkan data. Cek URL dengan teliti sebelum login.</p>
+          <div class="real-card rounded-lg p-2.5">
+            <span class="real-badge">CONTOH</span>
+            <p class="text-[11px] text-slate-700 mt-1.5">SMS "Selamat! Anda menang iPhone, klaim di bit.ly/xxx" — link itu mengarah ke situs palsu yang meminta data kartu kredit.</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 shadow-card border-l-4 border-emerald-400">
+          <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-500 flex items-center justify-center mb-3"><i class="fa-solid fa-key"></i></div>
+          <h4 class="font-bold text-slate-800 mb-1">Password & 2FA</h4>
+          <p class="text-xs text-slate-600 mb-2">Gunakan password panjang + unik per akun, dan aktifkan <b>2FA</b> (autentikasi dua faktor) untuk keamanan berlapis.</p>
+          <div class="real-card rounded-lg p-2.5">
+            <span class="real-badge">CONTOH</span>
+            <p class="text-[11px] text-slate-700 mt-1.5">Login Instagram pakai password + kode OTP WhatsApp = 2FA. Walau password bocor, penyerang tetap butuh OTP di HP Anda.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tips keamanan -->
+      <div class="bg-white rounded-2xl p-6 shadow-card border border-slate-100">
+        <h3 class="font-display font-bold text-lg mb-3 flex items-center gap-2"><i class="fa-solid fa-shield-heart text-emerald-500"></i>5 Kebiasaan Digital Aman (Sehari-hari)</h3>
+        <ol class="space-y-2 text-sm text-slate-700">
+          <li class="flex gap-2"><span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs shrink-0">1</span><span><b>Cek gembok 🔒</b> sebelum memasukkan password — terutama di M-Banking, email, marketplace.</span></li>
+          <li class="flex gap-2"><span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs shrink-0">2</span><span><b>Aktifkan 2FA</b> di semua akun penting (WhatsApp, Instagram, email, bank).</span></li>
+          <li class="flex gap-2"><span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs shrink-0">3</span><span><b>Jangan klik link sembarangan</b> dari SMS/WhatsApp — meski dari nomor yang terlihat resmi.</span></li>
+          <li class="flex gap-2"><span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs shrink-0">4</span><span><b>Ganti password</b> jika menduga akun bocor — dan jangan pakai password sama untuk banyak akun.</span></li>
+          <li class="flex gap-2"><span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs shrink-0">5</span><span><b>Hindari transaksi bank</b> di Wi-Fi publik gratis (bandara, kafe, mal). Gunakan data seluler sendiri.</span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== TAB 2: LAB MAYA ==================== -->
+  <section id="tab-lab" class="tab-content">
+    <div class="rounded-2xl bg-gradient-to-br from-emerald-500 via-cyan-600 to-indigo-600 p-6 sm:p-10 text-white mb-6 shadow-card relative overflow-hidden">
+      <div class="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-white/10"></div>
+      <div class="relative">
+        <span class="inline-block px-3 py-1 rounded-full bg-white/20 text-xs font-semibold mb-3 backdrop-blur"><i class="fa-solid fa-flask mr-1"></i> Lab Maya</span>
+        <h2 class="font-display text-2xl sm:text-3xl font-bold mb-2">Pembedah Miskonsepsi</h2>
+        <p class="text-cyan-50 text-sm sm:text-base max-w-2xl">Uji sendiri apakah anggapan populer tentang jaringan & internet itu benar. Ubah parameter dan lihat hasilnya secara langsung!</p>
+      </div>
+    </div>
+
+    <div class="space-y-5">
+      <!-- Lab 1 -->
+      <div class="bg-white rounded-2xl p-6 shadow-card border border-slate-100">
+        <div class="flex items-start gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <div>
+            <span class="text-[10px] font-bold text-amber-600 uppercase tracking-wide">Miskonsepsi #1</span>
+            <h3 class="font-display font-bold text-lg text-slate-800">"Terhubung ke Wi-Fi / Router Berarti Otomatis Bisa Internetan"</h3>
+          </div>
+        </div>
+
+        <div class="real-card rounded-lg p-3 mb-4">
+          <span class="real-badge">SKENARIO NYATA</span>
+          <p class="text-xs text-slate-700 mt-2">Malam Minggu, kamu di rumah teman. HP menampilkan Wi-Fi "HOME-5G" tersambung penuh, tapi saat buka Instagram muncul "Tidak ada koneksi internet". Ternyata kabel modem IndiHome di rumah temanmu lupa dibayar / tercabut!</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 items-center">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="flex items-center gap-3">
+                <div id="isp-icon" class="w-10 h-10 rounded-lg bg-slate-300 text-white flex items-center justify-center"><i class="fa-solid fa-server"></i></div>
+                <div><p class="font-semibold text-sm text-slate-800">Koneksi ISP / Modem</p><p id="isp-status" class="text-xs text-slate-500">OFF — tidak ada internet</p></div>
+              </div>
+              <div id="isp-toggle" class="toggle-switch off"><div class="knob"></div></div>
+            </div>
+            <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-cyan-500 text-white flex items-center justify-center"><i class="fa-solid fa-wifi"></i></div>
+                <div><p class="font-semibold text-sm text-slate-800">Wi-Fi Router (LAN)</p><p class="text-xs text-slate-500">Terhubung — laptop di Wi-Fi</p></div>
+              </div>
+              <div class="toggle-switch on"><div class="knob"></div></div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <p class="text-xs font-semibold text-slate-500 mb-1">Tes buka instagram.com:</p>
+              <div id="net-test" class="p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm font-medium flex items-center gap-2">
+                <i class="fa-solid fa-circle-xmark"></i> <span>Gagal — tidak bisa terhubung ke internet</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-5 rounded-xl bg-gradient-to-br from-amber-50 to-white border border-amber-200">
+            <p class="text-sm font-bold text-amber-700 mb-2"><i class="fa-solid fa-lightbulb mr-1"></i>Kesimpulan Lab</p>
+            <p class="text-sm text-slate-600">Wi-Fi/Router hanya menghubungkan perangkat ke <b>jaringan lokal</b>. Agar bisa internetan, router perlu terhubung ke <b>modem/ISP</b>. Coba nyalakan saklar ISP!</p>
+            <div id="lab1-verdict" class="mt-3 p-3 rounded-lg bg-white border border-slate-200 text-sm text-slate-500 italic">Status: belum bisa internet.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lab 2 -->
+      <div class="bg-white rounded-2xl p-6 shadow-card border border-slate-100">
+        <div class="flex items-start gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-signal"></i></div>
+          <div>
+            <span class="text-[10px] font-bold text-indigo-600 uppercase tracking-wide">Miskonsepsi #2</span>
+            <h3 class="font-display font-bold text-lg text-slate-800">"Sinyal HP 5 Bar Berarti Otomatis Kecepatan Internet Sangat Cepat"</h3>
+          </div>
+        </div>
+
+        <div class="real-card rounded-lg p-3 mb-4">
+          <span class="real-badge">SKENARIO NYATA</span>
+          <p class="text-xs text-slate-700 mt-2">Jam 14.30 di sekolah. Sinyal 5 bar penuh (dekat BTS), tapi saat kamu buka TikTok video buffering terus. Ternyata <b>500 siswa</b> lain juga sedang istirahat dan streaming di BTS yang sama!</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="space-y-5">
+            <div>
+              <div class="flex justify-between items-center mb-1.5">
+                <label class="text-sm font-semibold text-slate-700"><i class="fa-solid fa-signal text-indigo-500 mr-1"></i>Kekuatan Sinyal (Bar)</label>
+                <span id="signal-val" class="text-sm font-bold text-indigo-600">3 / 5</span>
+              </div>
+              <input type="range" id="signal-slider" min="1" max="5" value="3" step="1" class="bg-gradient-to-r from-indigo-200 to-indigo-500">
+              <div class="flex justify-between mt-2 gap-1" id="signal-bars"></div>
+            </div>
+            <div>
+              <div class="flex justify-between items-center mb-1.5">
+                <label class="text-sm font-semibold text-slate-700"><i class="fa-solid fa-users text-amber-500 mr-1"></i>Jumlah Pengguna BTS Terdekat</label>
+                <span id="users-val" class="text-sm font-bold text-amber-600">50 pengguna</span>
+              </div>
+              <input type="range" id="users-slider" min="1" max="500" value="50" step="1" class="bg-gradient-to-r from-amber-200 to-amber-500">
+              <div class="flex justify-between text-[10px] text-slate-400 mt-1"><span>Sepi</span><span>Ramai (jam istirahat)</span></div>
+            </div>
+          </div>
+          <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-center">
+            <p class="text-xs font-semibold text-slate-500 mb-1">Hasil simulasi kecepatan internet:</p>
+            <div class="text-center my-2">
+              <span id="speed-val" class="font-display text-4xl font-extrabold text-indigo-600">--</span>
+              <span class="text-sm text-slate-500 font-medium">Mbps</span>
+            </div>
+            <div class="w-full h-3 rounded-full bg-slate-200 overflow-hidden mb-2">
+              <div id="speed-bar" class="h-full bg-gradient-to-r from-cyan-400 to-indigo-500 transition-all duration-500" style="width:0%"></div>
+            </div>
+            <p id="speed-verdict" class="text-xs text-slate-600 text-center leading-relaxed">Atur slider untuk melihat pengaruh sinyal & kepadatan pengguna.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lab 3 -->
+      <div class="bg-white rounded-2xl p-6 shadow-card border border-slate-100">
+        <div class="flex items-start gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-shield-halved"></i></div>
+          <div>
+            <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wide">Miskonsepsi #3</span>
+            <h3 class="font-display font-bold text-lg text-slate-800">"Mode Incognito / HTTPS Membuat Kita 100% Anonim & Bebas Virus"</h3>
+          </div>
+        </div>
+
+        <div class="real-card rounded-lg p-3 mb-4">
+          <span class="real-badge">SKENARIO NYATA</span>
+          <p class="text-xs text-slate-700 mt-2">Kamu buka mode Incognito di lab komputer sekolah untuk login Facebook. Merasa "tidak ada yang tahu", kamu buka juga situs download film ilegal berisi malware. Besoknya akun FB kamu di-hack, dan komputer lab jadi lambat!</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-5">
+          <div class="space-y-3">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <p class="text-sm font-semibold text-slate-700 mb-2"><i class="fa-solid fa-toggle-on text-cyan-500 mr-1"></i>Protokol Situs</p>
+              <div class="flex gap-2">
+                <button id="btn-http" class="flex-1 py-2 rounded-lg border-2 border-red-400 bg-red-50 text-red-600 text-xs font-bold">HTTP (tanpa enkripsi)</button>
+                <button id="btn-https" class="flex-1 py-2 rounded-lg border-2 border-emerald-400 bg-emerald-50 text-emerald-600 text-xs font-bold">HTTPS (terenkripsi)</button>
+              </div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <p class="text-sm font-semibold text-slate-700 mb-2"><i class="fa-solid fa-user-secret text-amber-500 mr-1"></i>Mode Penjelajahan</p>
+              <div class="flex gap-2">
+                <button id="btn-normal" class="flex-1 py-2 rounded-lg border-2 border-slate-300 bg-white text-slate-600 text-xs font-bold">Normal</button>
+                <button id="btn-incognito" class="flex-1 py-2 rounded-lg border-2 border-indigo-400 bg-indigo-50 text-indigo-600 text-xs font-bold">Incognito</button>
+              </div>
+            </div>
+          </div>
+          <div class="p-5 rounded-xl bg-slate-900 border border-slate-700 font-mono text-xs leading-relaxed">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-slate-400 text-[10px]">LOG ROUTER WI-FI PUBLIK</span>
+              <span class="text-slate-500 text-[10px]" id="log-http-status">HTTP</span>
+            </div>
+            <div id="router-log" class="text-emerald-400 space-y-1">
+              <p class="text-slate-400">[sistem] menunggu aktivitas...</p>
+            </div>
+          </div>
+        </div>
+        <div id="lab3-verdict" class="mt-4 p-4 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-800">
+          <i class="fa-solid fa-lightbulb mr-1"></i> <b>Ingat:</b> Incognito hanya menghapus riwayat di perangkat Anda — <b>bukan</b> menyembunyikan aktivitas dari router/ISP. HTTPS melindungi isi data, tetapi virus bisa tetap terunduh dari situs jahat.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== TAB 3: KUIS ==================== -->
+  <section id="tab-kuis" class="tab-content">
+    <div class="rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-600 to-cyan-600 p-6 sm:p-10 text-white mb-6 shadow-card relative overflow-hidden">
+      <div class="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-white/10"></div>
+      <div class="relative">
+        <span class="inline-block px-3 py-1 rounded-full bg-white/20 text-xs font-semibold mb-3 backdrop-blur"><i class="fa-solid fa-clipboard-question mr-1"></i> Evaluasi HOTS</span>
+        <h2 class="font-display text-2xl sm:text-3xl font-bold mb-2">Kuis Akhir Materi</h2>
+        <p class="text-indigo-50 text-sm sm:text-base max-w-2xl">10 soal pilihan ganda berbasis studi kasus sehari-hari. Jawab semua soal, lalu kirim untuk melihat skor & pembahasan.</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 shadow-card border border-slate-100 mb-5">
+      <h3 class="font-display font-bold text-lg mb-4 flex items-center gap-2"><i class="fa-solid fa-id-card text-cyan-500"></i> Identitas Siswa</h3>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-semibold text-slate-600 mb-1">Nama Lengkap <span class="text-red-500">*</span></label>
+          <input id="student-name" type="text" placeholder="Contoh: Budi Santoso" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition text-sm">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-600 mb-1">Kelas <span class="text-red-500">*</span></label>
+          <input id="student-class" type="text" placeholder="Contoh: X IPA 1" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition text-sm">
+        </div>
+      </div>
+    </div>
+
+    <div id="quiz-container" class="space-y-4"></div>
+
+    <div class="bg-white rounded-2xl p-6 shadow-card border border-slate-100 mt-5 no-print">
+      <div id="submit-feedback" class="hidden mb-3 p-3 rounded-xl text-sm font-medium"></div>
+      <button id="btn-submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-white font-bold text-sm sm:text-base shadow-lg hover:shadow-xl hover:brightness-110 transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-paper-plane"></i> Kirim Jawaban & Lihat Hasil
+      </button>
+      <p class="text-center text-xs text-slate-500 mt-2">Pastikan identitas & semua soal sudah terisi sebelum mengirim.</p>
+    </div>
+  </section>
+
+  <!-- ==================== TAB 4: LKPD ==================== -->
+  <section id="tab-lkpd" class="tab-content">
+    <div class="rounded-2xl bg-gradient-to-br from-amber-500 via-orange-500 to-red-500 p-6 sm:p-10 text-white mb-6 shadow-card relative overflow-hidden">
+      <div class="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-white/10"></div>
+      <div class="relative">
+        <span class="inline-block px-3 py-1 rounded-full bg-white/20 text-xs font-semibold mb-3 backdrop-blur"><i class="fa-solid fa-file-pen mr-1"></i> LKPD Digital</span>
+        <h2 class="font-display text-2xl sm:text-3xl font-bold mb-2">Lembar Kerja Peserta Didik</h2>
+        <p class="text-amber-50 text-sm sm:text-base max-w-2xl">Aktivitas mandiri/kelompok untuk menerapkan konsep jaringan & internet pada perangkat Anda sendiri.</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 shadow-card border border-slate-100 space-y-6">
+      <div>
+        <h3 class="font-display font-bold text-lg text-slate-800 mb-3 flex items-center gap-2"><i class="fa-solid fa-user text-cyan-500"></i> Identitas</h3>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-slate-600 mb-1">Nama Siswa / Kelompok</label>
+            <input id="lkpd-name" type="text" placeholder="Nama lengkap" class="lkpd-input w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition text-sm">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-600 mb-1">Kelas</label>
+            <input id="lkpd-class" type="text" placeholder="Kelas" class="lkpd-input w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition text-sm">
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 rounded-xl bg-cyan-50 border border-cyan-200">
+        <p class="font-bold text-cyan-800 mb-2"><i class="fa-solid fa-1 mr-1"></i> Aktivitas 1 — Cek IP Address Perangkat</p>
+        <p class="text-xs text-slate-600 mb-2"><b>Langkah:</b> Buka <i>Pengaturan → Wi-Fi → Ketuk nama Wi-Fi Anda → Lihat detail</i> di HP Android, atau <i>Settings → Network → Wi-Fi → Details</i> di iPhone. Atau kunjungi <code class="bg-white px-1 rounded">whatismyip.com</code> untuk melihat IP Public.</p>
+        <p class="text-xs text-slate-600 mb-3 italic">Pertanyaan: Tuliskan IP Private & IP Public perangkat Anda, lalu bandingkan dengan teman semeja — apakah sama atau berbeda? Mengapa?</p>
+        <div class="grid sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">IP Private perangkat</label>
+            <input id="lkpd-ip-private" type="text" placeholder="Contoh: 192.168.1.10" class="lkpd-input w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-cyan-500 outline-none text-sm font-mono">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">IP Public (hasil cek)</label>
+            <input id="lkpd-ip-public" type="text" placeholder="Contoh: 103.47.x.x" class="lkpd-input w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-cyan-500 outline-none text-sm font-mono">
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+        <p class="font-bold text-emerald-800 mb-2"><i class="fa-solid fa-2 mr-1"></i> Aktivitas 2 — Uji URL HTTP vs HTTPS</p>
+        <p class="text-xs text-slate-600 mb-2"><b>Langkah:</b> Kunjungi salah satu situs yang Anda sering buka (mis. instagram.com, tokopedia.com). Perhatikan ikon gembok 🔒 di address bar. Lalu coba kunjungi <code class="bg-white px-1 rounded">http://neverssl.com</code> sebagai contoh situs HTTP murni.</p>
+        <p class="text-xs text-slate-600 mb-3 italic">Pertanyaan: Apa perbedaan yang Anda lihat? Apakah Anda akan memasukkan password di situs HTTP? Mengapa?</p>
+        <div class="space-y-3">
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">URL situs yang diuji</label>
+              <input id="lkpd-url1" type="text" placeholder="Contoh: https://instagram.com" class="lkpd-input w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-emerald-500 outline-none text-sm font-mono">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Status keamanan</label>
+              <select id="lkpd-url1-sec" class="lkpd-input w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-emerald-500 outline-none text-sm">
+                <option value="">-- pilih --</option>
+                <option value="Tidak aman (HTTP)">Tidak aman (HTTP)</option>
+                <option value="Aman (HTTPS)">Aman (HTTPS)</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Catatan pengamatan</label>
+            <textarea id="lkpd-url1-note" rows="2" placeholder="Tuliskan apa yang Anda lihat di address bar dan mengapa Anda memilih status tersebut..." class="lkpd-input w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-emerald-500 outline-none text-sm"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aktivitas 3: baru -->
+      <div class="p-4 rounded-xl bg-indigo-50 border border-indigo-200">
+        <p class="font-bold text-indigo-800 mb-2"><i class="fa-solid fa-3 mr-1"></i> Aktivitas 3 — Analisis Skenario Sehari-hari</p>
+        <p class="text-xs text-slate-600 mb-3">Bacalah skenario berikut, lalu tuliskan analisis Anda.</p>
+        <div class="p-3 rounded-lg bg-white border border-indigo-200 mb-3">
+          <p class="text-xs text-slate-700 italic">"Andi mengaktifkan hotspot dari HP-nya untuk mengerjakan tugas di laptop. Setelah 2 jam, kuotanya habis. Andi bingung karena ia merasa hanya browsing ringan — padahal teman-temannya juga ikut terhubung ke hotspot Andi tanpa sepengetahuannya."</p>
+        </div>
+        <textarea id="lkpd-scenario" rows="3" placeholder="Apa kesalahan Andi? Bagaimana seharusnya ia mengamankan hotspot-nya?" class="lkpd-input w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-indigo-500 outline-none text-sm"></textarea>
+      </div>
+
+      <div class="p-4 rounded-xl bg-amber-50 border border-amber-200">
+        <p class="font-bold text-amber-800 mb-2"><i class="fa-solid fa-4 mr-1"></i> Aktivitas 4 — Kesimpulan</p>
+        <textarea id="lkpd-conclusion" rows="4" placeholder="Tuliskan kesimpulan Anda tentang perbedaan LAN & Internet, pentingnya HTTPS, dan 3 kebiasaan digital aman yang akan Anda terapkan..." class="lkpd-input w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-amber-500 outline-none text-sm"></textarea>
+      </div>
+
+      <div class="flex flex-wrap gap-3 no-print">
+        <button id="btn-print-lkpd" class="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-slate-800 text-white text-sm font-semibold hover:bg-slate-900 transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-print"></i> Cetak / Simpan PDF
+        </button>
+        <button id="btn-send-lkpd" class="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-white text-sm font-semibold hover:brightness-110 transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Kirim Hasil LKPD ke Google Drive
+        </button>
+      </div>
+      <div id="lkpd-feedback" class="hidden p-3 rounded-xl text-sm font-medium"></div>
+    </div>
+  </section>
+
+</main>
+
+<div id="result-modal" class="modal-overlay">
+  <div class="modal-content bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div id="modal-header" class="p-6 text-white rounded-t-2xl bg-gradient-to-br from-cyan-500 to-indigo-600 relative">
+      <button onclick="closeModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white"><i class="fa-solid fa-xmark"></i></button>
+      <h3 class="font-display text-2xl font-bold mb-1">Hasil Evaluasi</h3>
+      <p id="modal-subtitle" class="text-cyan-50 text-sm">Ringkasan jawaban Anda</p>
+    </div>
+    <div class="p-6">
+      <div id="modal-score-area" class="grid grid-cols-3 gap-3 mb-5"></div>
+      <div id="modal-send-status" class="hidden mb-4 p-3 rounded-xl text-sm font-medium"></div>
+      <h4 class="font-display font-bold text-slate-800 mb-3 flex items-center gap-2"><i class="fa-solid fa-list-check text-cyan-500"></i> Pembahasan</h4>
+      <div id="modal-review" class="space-y-3"></div>
+      <div class="mt-6 flex gap-3">
+        <button onclick="closeModal()" class="flex-1 py-2.5 rounded-xl bg-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-300 transition">Tutup</button>
+        <button onclick="window.print()" class="flex-1 py-2.5 rounded-xl bg-slate-800 text-white font-semibold text-sm hover:bg-slate-900 transition flex items-center justify-center gap-2"><i class="fa-solid fa-print"></i> Cetak</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const GOOGLE_SCRIPT_URL = "URL_GOOGLE_APPS_SCRIPT_ANDA_DI_SINI";
+
+/* =========================================================
+   SOAL KUIS — DIPERKAYA DENGAN KONTEKS SEHARI-HARI
+   ========================================================= */
+const quizData = [
+  {
+    q: "Rina di lab sekolah bisa membuka file di komputer temannya, tetapi tidak bisa membuka google.com. Ia melihat ikon Wi-Fi tersambung ke router. Kemungkinan penyebab paling tepat adalah...",
+    opts: [
+      "Kartu jaringan (NIC) Rina rusak total",
+      "Router tidak terhubung ke modem/ISP (tidak ada koneksi internet)",
+      "Komputer temannya memakai IP public",
+      "Wi-Fi sekolah menggunakan protokol HTTPS"
+    ],
+    answer: 1,
+    explain: "Tersambung ke Wi-Fi hanya berarti masuk jaringan lokal (LAN). Untuk internetan, router harus terhubung ke ISP melalui modem — seperti kejadian nyata saat kabel/paket IndiHome bermasalah, Wi-Fi tetap terlihat 'tersambung' tapi tidak ada internet."
+  },
+  {
+    q: "Andi mengakses google.com lalu melihat IP-nya 142.250.x.x. Saat cek IP komputernya, tertulis 192.168.1.5. Pernyataan yang benar adalah...",
+    opts: [
+      "192.168.1.5 adalah IP public, 142.250.x.x adalah IP private",
+      "Keduanya IP public karena bisa dibuka di browser",
+      "192.168.1.5 adalah IP private (LAN), 142.250.x.x adalah IP public server Google di internet",
+      "IP private dan public tidak berpengaruh pada koneksi"
+    ],
+    answer: 2,
+    explain: "192.168.x.x adalah rentang IP private untuk LAN (seperti nomor kamar asrama). IP 142.250.x.x milik server Google di internet (public, seperti alamat gedung). Router menerjemahkan IP private ke IP public lewat NAT."
+  },
+  {
+    q: "Di warnet, ada satu switch 24-port untuk semua komputer dan satu router terhubung ke modem ISP. Fungsi switch pada skenario ini adalah...",
+    opts: [
+      "Menerjemahkan IP private ke IP public",
+      "Menghubungkan semua komputer dalam satu LAN agar bisa saling berkomunikasi",
+      "Menyimpan cache halaman web",
+      "Mengenkripsi semua data yang lewat"
+    ],
+    answer: 1,
+    explain: "Switch seperti 'pertigaan' dalam kompleks — menghubungkan banyak perangkat dalam satu LAN berdasarkan MAC address. Tugas NAT/IP public adalah fungsi router (gerbang tol)."
+  },
+  {
+    q: "Saat berada di daerah dengan sinyal HP 5 bar, Dita mengeluh internetnya lambat pada jam sibuk (jam istirahat sekolah). Penjelasan paling tepat adalah...",
+    opts: [
+      "Sinyal kuat selalu menjamin kecepatan tinggi",
+      "Kekuatan sinyal hanya menunjukkan kualitas koneksi ke BTS, sedangkan kecepatan juga dipengaruhi jumlah pengguna yang berbagi bandwidth BTS tersebut",
+      "5 bar berarti ponsel menggunakan Wi-Fi",
+      "Kecepatan internet tidak dipengaruhi BTS"
+    ],
+    answer: 1,
+    explain: "Bar sinyal = kualitas koneksi ke BTS. Bandwidth BTS dibagi ke semua pengguna. Saat 500 siswa streaming bersamaan di jam istirahat, kecepatan per siswa turun drastis walau sinyal 5 bar."
+  },
+  {
+    q: "Budi mengaktifkan hotspot dari ponselnya (kuota seluler) agar laptop bisa internetan. Teknologi yang digunakan Budi disebut...",
+    opts: ["Bluetooth pairing", "Tethering / hotspot seluler", "NFC transfer", "Infrared"],
+    answer: 1,
+    explain: "Tethering/hotspot seluler membagikan koneksi data seluler ponsel ke perangkat lain — seperti yang dilakukan guru saat Wi-Fi sekolah mati untuk presentasi."
+  },
+  {
+    q: "Saat login ke situs bank di Wi-Fi kafe, Dodi melihat alamat URL diawali 'http://' tanpa ikon gembok. Tindakan paling aman adalah...",
+    opts: [
+      "Tetap login karena kafe ternama",
+      "Membatalkan login, karena HTTP tidak terenkripsi dan data bisa disadap di Wi-Fi publik",
+      "Mengaktifkan mode pesawat",
+      "Mengganti password setelah login"
+    ],
+    answer: 1,
+    explain: "HTTP seperti kartu pos terbuka — siapa pun yang memegangnya bisa baca isinya. Di Wi-Fi publik, penyadap bisa merekam password Anda. Selalu pastikan HTTPS (ikon gembok)."
+  },
+  {
+    q: "Seorang siswa membuka mode Incognito lalu login ke akun media sosial di Wi-Fi sekolah. Ia merasa 'aman karena tidak terlacak'. Penilaian yang benar adalah...",
+    opts: [
+      "Benar, Incognito menyembunyikan aktivitas dari semua pihak",
+      "Salah, Incognito hanya menghapus riwayat lokal; router/ISP tetap dapat mencatat koneksi dan situs tetap bisa mengumpulkan data login",
+      "Benar, Incognito otomatis mengaktifkan VPN",
+      "Salah, Incognito memblokir semua virus"
+    ],
+    answer: 1,
+    explain: "Incognito seperti menyembunyikan bekas kaki Anda di lantai, tapi satpam (router) tetap melihat Anda masuk pintu. Router & ISP tetap mencatat koneksi, dan situs tetap bisa mengumpulkan data."
+  },
+  {
+    q: "Perhatikan URL: https://www.sekolah-id.login-verifikasi.xyz. Gejala yang paling mencurigakan sebagai indikasi phishing adalah...",
+    opts: [
+      "Menggunakan HTTPS sehingga pasti aman",
+      "Nama domain utama 'login-verifikasi.xyz' bukan domain resmi sekolah, meski ada kata 'sekolah-id'",
+      "URL terlalu panjang",
+      "Menggunakan www"
+    ],
+    answer: 1,
+    explain: "HTTPS hanya berarti koneksi terenkripsi, bukan situs terpercaya — seperti amplop tersegel yang bisa saja berisi surat tipuan. Phishing sering pakai domain mirip (typosquatting) dengan subdomain menggoda."
+  },
+  {
+    q: "Manakah kombinasi praktik keamanan kata sandi yang PALING kuat?",
+    opts: [
+      "Password '12345678' di semua akun agar mudah diingat",
+      "Password panjang & unik per akun + aktifkan 2FA",
+      "Password tanggal lahir + nama ibu",
+      "Password sama dengan username agar mudah"
+    ],
+    answer: 1,
+    explain: "Password panjang, unik per akun, dan 2FA (mis. kode OTP WhatsApp) memberi pertahanan berlapis. Jika satu akun bocor, akun lain tetap aman — berbeda dengan pakai password sama di semua akun."
+  },
+  {
+    q: "Sebuah sekolah ingin memastikan data nilai siswa aman saat dikirim ke server pusat. Solusi paling tepat adalah...",
+    opts: [
+      "Menggunakan HTTP agar lebih cepat",
+      "Menggunakan HTTPS (TLS) agar data terenkripsi saat transit",
+      "Menyimpan password di URL",
+      "Mematikan firewall agar lancar"
+    ],
+    answer: 1,
+    explain: "HTTPS/TLS mengenkripsi data saat transit — seperti amplop tersegel. Bahkan jika ada penyadap di jalur, isi data (nilai siswa) tidak terbaca. Ini standar industri untuk data sensitif."
+  }
+];
+
+const state = {
+  answers: new Array(quizData.length).fill(null),
+  submitted: false,
+  score: 0,
+  correct: 0,
+  wrong: 0
+};
+
+/* TAB NAVIGATION */
+document.querySelectorAll('.nav-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+
+document.querySelectorAll('.subtab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const sub = btn.dataset.subtab;
+    document.querySelectorAll('.subtab-btn').forEach(b => {
+      b.classList.remove('active', 'text-cyan-600', 'border-cyan-500');
+      b.classList.add('text-slate-600', 'border-transparent');
+    });
+    btn.classList.add('active', 'text-cyan-600', 'border-cyan-500');
+    btn.classList.remove('text-slate-600', 'border-transparent');
+    document.querySelectorAll('.subtab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById(sub).classList.add('active');
+  });
+});
+
+/* ACCORDION */
+document.querySelectorAll('.acc-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const content = btn.nextElementSibling;
+    const chevron = btn.querySelector('.acc-chevron');
+    content.classList.toggle('open');
+    chevron.classList.toggle('open');
+  });
+});
+
+/* LAB 1 */
+let ispOn = false;
+const ispToggle = document.getElementById('isp-toggle');
+const ispIcon = document.getElementById('isp-icon');
+const ispStatus = document.getElementById('isp-status');
+const netTest = document.getElementById('net-test');
+const lab1Verdict = document.getElementById('lab1-verdict');
+
+ispToggle.addEventListener('click', () => {
+  ispOn = !ispOn;
+  ispToggle.classList.toggle('on', ispOn);
+  ispToggle.classList.toggle('off', !ispOn);
+  if (ispOn) {
+    ispIcon.className = 'w-10 h-10 rounded-lg bg-emerald-500 text-white flex items-center justify-center';
+    ispStatus.textContent = 'ON — internet tersedia';
+    ispStatus.className = 'text-xs text-emerald-600 font-medium';
+    netTest.className = 'p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-600 text-sm font-medium flex items-center gap-2';
+    netTest.innerHTML = '<i class="fa-solid fa-circle-check"></i> <span>Berhasil — instagram.com terbuka (butuh waktu ±1 detik)</span>';
+    lab1Verdict.className = 'mt-3 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-sm text-emerald-700';
+    lab1Verdict.innerHTML = '<b>Status: BISA INTERNET.</b> Router + ISP aktif. Wi-Fi saja tidak cukup tanpa ISP.';
+  } else {
+    ispIcon.className = 'w-10 h-10 rounded-lg bg-slate-300 text-white flex items-center justify-center';
+    ispStatus.textContent = 'OFF — tidak ada internet';
+    ispStatus.className = 'text-xs text-slate-500';
+    netTest.className = 'p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm font-medium flex items-center gap-2';
+    netTest.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> <span>Gagal — tidak bisa terhubung ke internet</span>';
+    lab1Verdict.className = 'mt-3 p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700';
+    lab1Verdict.innerHTML = '<b>Status: TIDAK BISA INTERNET.</b> Wi-Fi tersambung, tetapi router tidak punya jalur ke ISP.';
+  }
+});
+
+/* LAB 2 */
+const signalSlider = document.getElementById('signal-slider');
+const usersSlider = document.getElementById('users-slider');
+const signalVal = document.getElementById('signal-val');
+const usersVal = document.getElementById('users-val');
+const speedVal = document.getElementById('speed-val');
+const speedBar = document.getElementById('speed-bar');
+const speedVerdict = document.getElementById('speed-verdict');
+const signalBars = document.getElementById('signal-bars');
+
+function renderSignalBars(n) {
+  signalBars.innerHTML = '';
+  for (let i = 1; i <= 5; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'signal-bar flex-1 rounded-sm';
+    bar.style.height = (8 + i * 5) + 'px';
+    bar.style.background = i <= n ? '#6366f1' : '#e2e8f0';
+    signalBars.appendChild(bar);
+  }
+}
+
+function updateSpeedSim() {
+  const sig = parseInt(signalSlider.value);
+  const users = parseInt(usersSlider.value);
+  const baseSpeed = sig * 60;
+  const densityFactor = Math.max(0.15, 1 - (users / 600));
+  const speed = Math.round(baseSpeed * densityFactor);
+
+  signalVal.textContent = sig + ' / 5';
+  usersVal.textContent = users + ' pengguna';
+  renderSignalBars(sig);
+  speedVal.textContent = speed;
+  const pct = Math.min(100, (speed / 300) * 100);
+  speedBar.style.width = pct + '%';
+
+  let verdict = '';
+  if (speed >= 150) verdict = '🚀 Sangat cepat — BTS sepi, bandwidth lega untuk streaming 4K.';
+  else if (speed >= 60) verdict = '✅ Cukup cepat — nyaman untuk YouTube 1080p & video call.';
+  else if (speed >= 20) verdict = '⚠️ Mulai melambat — masih bisa browsing, tapi video mulai buffering.';
+  else verdict = '🐢 Lambat! Sinyal kuat, tapi BTS "macet" karena dibagi banyak pengguna.';
+
+  speedVerdict.textContent = verdict;
+}
+
+signalSlider.addEventListener('input', updateSpeedSim);
+usersSlider.addEventListener('input', updateSpeedSim);
+updateSpeedSim();
+
+/* LAB 3 */
+const routerLog = document.getElementById('router-log');
+const logHttpStatus = document.getElementById('log-http-status');
+let protocolMode = 'http';
+let browseMode = 'normal';
+const btnHttp = document.getElementById('btn-http');
+const btnHttps = document.getElementById('btn-https');
+const btnNormal = document.getElementById('btn-normal');
+const btnIncognito = document.getElementById('btn-incognito');
+
+function setActiveBtn(activeBtn, group) {
+  group.forEach(b => b.classList.remove('ring-2', 'ring-offset-1'));
+  activeBtn.classList.add('ring-2', 'ring-offset-1');
+}
+
+function logActivity(msg, color = 'text-emerald-400') {
+  const p = document.createElement('p');
+  p.className = color;
+  p.textContent = msg;
+  routerLog.appendChild(p);
+  while (routerLog.children.length > 8) routerLog.removeChild(routerLog.firstChild);
+  routerLog.scrollTop = routerLog.scrollHeight;
+}
+
+function simulateBrowse() {
+  routerLog.innerHTML = '';
+  logActivity('[router] sesi browsing dimulai...', 'text-slate-400');
+  const incognitoInfo = browseMode === 'incognito'
+    ? '(Incognito: riwayat lokal disembunyikan)'
+    : '(Normal: riwayat lokal disimpan)';
+  logActivity('[perangkat] ' + incognitoInfo, 'text-slate-300');
+
+  if (protocolMode === 'http') {
+    logHttpStatus.textContent = 'HTTP';
+    logHttpStatus.className = 'text-red-400 text-[10px]';
+    logActivity('[router] GET http://situs.com/login', 'text-amber-300');
+    logActivity('[router] 📤 DATA TERBACA: username=dodi, password=rahasia123', 'text-red-400');
+    logActivity('[router] ⚠️ Penyadap di Wi-Fi publik bisa membaca isi data!', 'text-red-400');
+  } else {
+    logHttpStatus.textContent = 'HTTPS';
+    logHttpStatus.className = 'text-emerald-400 text-[10px]';
+    logActivity('[router] GET https://situs.com/login', 'text-amber-300');
+    logActivity('[router] 🔒 Data terenkripsi TLS: 8f3a9c...e21b (tidak terbaca)', 'text-emerald-400');
+    logActivity('[router] ✅ Penyadap hanya melihat koneksi ke situs, bukan isinya', 'text-emerald-400');
+  }
+
+  logActivity('[info] ' + (browseMode === 'incognito'
+    ? 'Incognito TIDAK menyembunyikan log router ini.'
+    : 'Log router tetap mencatat aktivitas meski normal.'), 'text-indigo-300');
+}
+
+btnHttp.addEventListener('click', () => { protocolMode = 'http'; setActiveBtn(btnHttp, [btnHttp, btnHttps]); simulateBrowse(); });
+btnHttps.addEventListener('click', () => { protocolMode = 'https'; setActiveBtn(btnHttps, [btnHttp, btnHttps]); simulateBrowse(); });
+btnNormal.addEventListener('click', () => { browseMode = 'normal'; setActiveBtn(btnNormal, [btnNormal, btnIncognito]); simulateBrowse(); });
+btnIncognito.addEventListener('click', () => { browseMode = 'incognito'; setActiveBtn(btnIncognito, [btnNormal, btnIncognito]); simulateBrowse(); });
+
+setActiveBtn(btnHttp, [btnHttp, btnHttps]);
+setActiveBtn(btnNormal, [btnNormal, btnIncognito]);
+simulateBrowse();
+
+/* KUIS */
+const quizContainer = document.getElementById('quiz-container');
+
+function renderQuiz() {
+  quizContainer.innerHTML = '';
+  quizData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'bg-white rounded-2xl p-5 sm:p-6 shadow-card border border-slate-100';
+    card.id = 'q-' + idx;
+    let optsHtml = '';
+    const labels = ['A', 'B', 'C', 'D'];
+    item.opts.forEach((opt, oi) => {
+      optsHtml += `
+        <div class="option-card flex items-start gap-3 p-3 rounded-xl border-2 border-slate-200 bg-white" data-q="${idx}" data-o="${oi}">
+          <div class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-bold shrink-0 option-label">${labels[oi]}</div>
+          <p class="text-sm text-slate-700 leading-snug pt-0.5">${opt}</p>
+        </div>`;
+    });
+    card.innerHTML = `
+      <div class="flex items-start gap-3 mb-4">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-indigo-500 text-white flex items-center justify-center text-xs font-bold shrink-0">${idx + 1}</div>
+        <p class="text-sm sm:text-base font-medium text-slate-800 leading-relaxed">${item.q}</p>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-2.5">${optsHtml}</div>
+      <div class="q-feedback hidden mt-3 p-3 rounded-xl text-sm"></div>
+    `;
+    quizContainer.appendChild(card);
+  });
+
+  quizContainer.querySelectorAll('.option-card').forEach(card => {
+    card.addEventListener('click', () => {
+      if (state.submitted) return;
+      const qi = parseInt(card.dataset.q);
+      const oi = parseInt(card.dataset.o);
+      state.answers[qi] = oi;
+      const parent = card.parentElement;
+      parent.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      parent.querySelectorAll('.option-card').forEach(c => {
+        const lbl = c.querySelector('.option-label');
+        if (c.classList.contains('selected')) {
+          lbl.className = 'w-7 h-7 rounded-lg bg-cyan-500 text-white flex items-center justify-center text-xs font-bold shrink-0 option-label';
+        } else {
+          lbl.className = 'w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-bold shrink-0 option-label';
+        }
+      });
+    });
+  });
+}
+renderQuiz();
+
+/* SUBMIT */
+const btnSubmit = document.getElementById('btn-submit');
+const submitFeedback = document.getElementById('submit-feedback');
+
+function showFeedback(el, msg, type) {
+  el.classList.remove('hidden', 'bg-red-50', 'text-red-600', 'bg-emerald-50', 'text-emerald-600', 'bg-amber-50', 'text-amber-700');
+  el.classList.add('block');
+  if (type === 'error') el.classList.add('bg-red-50', 'text-red-600');
+  else if (type === 'success') el.classList.add('bg-emerald-50', 'text-emerald-600');
+  else el.classList.add('bg-amber-50', 'text-amber-700');
+  el.innerHTML = msg;
+}
+
+btnSubmit.addEventListener('click', () => {
+  if (state.submitted) return;
+  const name = document.getElementById('student-name').value.trim();
+  const klass = document.getElementById('student-class').value.trim();
+
+  if (!name || !klass) {
+    showFeedback(submitFeedback, '<i class="fa-solid fa-circle-exclamation mr-1"></i> Lengkapi <b>Nama Lengkap</b> dan <b>Kelas</b> terlebih dahulu!', 'error');
+    document.getElementById('student-name').focus();
+    return;
+  }
+  const unanswered = state.answers.findIndex(a => a === null);
+  if (unanswered !== -1) {
+    showFeedback(submitFeedback, `<i class="fa-solid fa-circle-exclamation mr-1"></i> Soal nomor <b>${unanswered + 1}</b> belum dijawab. Jawab semua soal terlebih dahulu!`, 'error');
+    document.getElementById('q-' + unanswered).scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  let correct = 0;
+  state.answers.forEach((ans, i) => { if (ans === quizData[i].answer) correct++; });
+  const wrong = quizData.length - correct;
+  const score = Math.round((correct / quizData.length) * 100);
+
+  state.submitted = true;
+  state.correct = correct;
+  state.wrong = wrong;
+  state.score = score;
+
+  quizData.forEach((item, idx) => {
+    const card = document.getElementById('q-' + idx);
+    const opts = card.querySelectorAll('.option-card');
+    opts.forEach((opt, oi) => {
+      opt.style.cursor = 'default';
+      if (oi === item.answer) opt.classList.add('correct-answer');
+      else if (oi === state.answers[idx]) opt.classList.add('wrong-answer');
+      const lbl = opt.querySelector('.option-label');
+      if (oi === item.answer) lbl.className = 'w-7 h-7 rounded-lg bg-emerald-500 text-white flex items-center justify-center text-xs font-bold shrink-0 option-label';
+      else if (oi === state.answers[idx]) lbl.className = 'w-7 h-7 rounded-lg bg-red-500 text-white flex items-center justify-center text-xs font-bold shrink-0 option-label';
+    });
+    const fb = card.querySelector('.q-feedback');
+    const isRight = state.answers[idx] === item.answer;
+    fb.classList.remove('hidden');
+    fb.className = 'q-feedback mt-3 p-3 rounded-xl text-sm ' + (isRight ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200');
+    fb.innerHTML = `<b><i class="fa-solid ${isRight ? 'fa-circle-check' : 'fa-circle-xmark'} mr-1"></i>${isRight ? 'Benar!' : 'Salah.'}</b> Kunci: <b>${['A','B','C','D'][item.answer]}</b>. ${item.explain}`;
+  });
+
+  showFeedback(submitFeedback, `<i class="fa-solid fa-circle-check mr-1"></i> Jawaban terkirim! Skor Anda: <b>${score}</b>. Lihat pembahasan di bawah.`, 'success');
+  btnSubmit.disabled = true;
+  btnSubmit.className = 'w-full py-3.5 rounded-xl bg-slate-300 text-slate-500 font-bold text-sm sm:text-base cursor-not-allowed flex items-center justify-center gap-2';
+  btnSubmit.innerHTML = '<i class="fa-solid fa-check"></i> Sudah Dikirim';
+
+  if (score >= 75) {
+    setTimeout(() => {
+      confetti({ particleCount: 180, spread: 90, origin: { y: 0.6 }, colors: ['#06b6d4', '#10b981', '#6366f1', '#f59e0b'] });
+    }, 300);
+  }
+
+  showResultModal(name, klass, score, correct, wrong);
+
+  const payload = {
+    type: 'kuis',
+    nama: name,
+    kelas: klass,
+    skor: score,
+    benar: correct,
+    salah: wrong,
+    jawaban: state.answers.map((a, i) => ({ soal: i + 1, pilihan: ['A','B','C','D'][a], kunci: ['A','B','C','D'][quizData[i].answer], benar: a === quizData[i].answer })),
+    timestamp: new Date().toISOString()
+  };
+  sendToGoogleDrive(payload, 'modal-send-status');
+});
+
+/* MODAL */
+function showResultModal(name, klass, score, correct, wrong) {
+  const modal = document.getElementById('result-modal');
+  const header = document.getElementById('modal-header');
+  const subtitle = document.getElementById('modal-subtitle');
+  const scoreArea = document.getElementById('modal-score-area');
+  const review = document.getElementById('modal-review');
+
+  const passed = score >= 75;
+  header.className = 'p-6 text-white rounded-t-2xl relative ' + (passed ? 'bg-gradient-to-br from-emerald-500 to-cyan-600' : 'bg-gradient-to-br from-amber-500 to-red-500');
+  subtitle.textContent = `${name} — ${klass}`;
+
+  scoreArea.innerHTML = `
+    <div class="col-span-3 text-center p-4 rounded-xl bg-slate-50 border border-slate-200">
+      <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Nilai Akhir</p>
+      <p class="font-display text-5xl font-extrabold ${passed ? 'text-emerald-600' : 'text-red-500'}">${score}</p>
+      <p class="text-sm font-medium mt-1 ${passed ? 'text-emerald-600' : 'text-red-500'}">${passed ? '🎉 LULUS — Pertahankan!' : '📚 Belum lulus — pelajari kembali materinya'}</p>
+    </div>
+    <div class="text-center p-3 rounded-xl bg-emerald-50 border border-emerald-200"><p class="text-[10px] font-bold text-emerald-600 uppercase">Benar</p><p class="font-display text-2xl font-bold text-emerald-600">${correct}</p></div>
+    <div class="text-center p-3 rounded-xl bg-red-50 border border-red-200"><p class="text-[10px] font-bold text-red-600 uppercase">Salah</p><p class="font-display text-2xl font-bold text-red-600">${wrong}</p></div>
+    <div class="text-center p-3 rounded-xl bg-cyan-50 border border-cyan-200"><p class="text-[10px] font-bold text-cyan-600 uppercase">Total</p><p class="font-display text-2xl font-bold text-cyan-600">${quizData.length}</p></div>
+  `;
+
+  review.innerHTML = quizData.map((item, i) => {
+    const ans = state.answers[i];
+    const isRight = ans === item.answer;
+    return `
+      <div class="p-3 rounded-xl border ${isRight ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'}">
+        <p class="text-xs font-bold ${isRight ? 'text-emerald-700' : 'text-red-700'} mb-1"><i class="fa-solid ${isRight ? 'fa-circle-check' : 'fa-circle-xmark'} mr-1"></i> Soal ${i+1} — ${isRight ? 'Benar' : 'Salah'}</p>
+        <p class="text-xs text-slate-700 leading-relaxed"><b>Jawaban Anda:</b> ${['A','B','C','D'][ans]} — ${item.opts[ans]}</p>
+        ${!isRight ? `<p class="text-xs text-slate-700 leading-relaxed mt-1"><b>Kunci:</b> ${['A','B','C','D'][item.answer]} — ${item.opts[item.answer]}</p>` : ''}
+        <p class="text-xs text-slate-600 mt-1 italic">${item.explain}</p>
+      </div>
+    `;
+  }).join('');
+
+  modal.classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('result-modal').classList.remove('show');
+}
+
+document.getElementById('result-modal').addEventListener('click', (e) => {
+  if (e.target.id === 'result-modal') closeModal();
+});
+
+/* SEND TO GOOGLE DRIVE */
+async function sendToGoogleDrive(payload, statusElId) {
+  const statusEl = document.getElementById(statusElId);
+  if (!statusEl) return;
+  statusEl.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-700', 'bg-red-50', 'text-red-700', 'bg-cyan-50', 'text-cyan-700', 'bg-amber-50', 'text-amber-700');
+  statusEl.classList.add('block', 'bg-cyan-50', 'text-cyan-700');
+  statusEl.innerHTML = '<span class="spinner mr-2 align-middle"></span> Mengirim jawaban ke Google Drive...';
+
+  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('URL_GOOGLE_APPS_SCRIPT')) {
+    await new Promise(r => setTimeout(r, 1500));
+    statusEl.className = 'block p-3 rounded-xl text-sm font-medium bg-amber-50 text-amber-700 mb-4';
+    statusEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i> <b>Mode Demo:</b> URL Google Apps Script belum dikonfigurasi. Data <u>tidak</u> benar-benar dikirim. Konfigurasikan <code>GOOGLE_SCRIPT_URL</code> di kode untuk mengaktifkan penyimpanan otomatis.';
+    return;
+  }
+
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    await new Promise(r => setTimeout(r, 600));
+    statusEl.className = 'block p-3 rounded-xl text-sm font-medium bg-emerald-50 text-emerald-700 mb-4';
+    statusEl.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> ✅ Data Berhasil Disimpan di Drive Master Teacher';
+  } catch (err) {
+    console.error(err);
+    statusEl.className = 'block p-3 rounded-xl text-sm font-medium bg-red-50 text-red-700 mb-4';
+    statusEl.innerHTML = '<i class="fa-solid fa-circle-xmark mr-1"></i> Gagal mengirim: ' + err.message + '. Periksa URL & koneksi.';
+  }
+}
+
+/* LKPD */
+document.getElementById('btn-print-lkpd').addEventListener('click', () => { window.print(); });
+
+document.getElementById('btn-send-lkpd').addEventListener('click', () => {
+  const fb = document.getElementById('lkpd-feedback');
+  const name = document.getElementById('lkpd-name').value.trim();
+  const klass = document.getElementById('lkpd-class').value.trim();
+  if (!name || !klass) {
+    fb.classList.remove('hidden', 'bg-cyan-50', 'text-cyan-700', 'bg-emerald-50', 'text-emerald-700');
+    fb.className = 'block p-3 rounded-xl text-sm font-medium bg-red-50 text-red-600';
+    fb.innerHTML = '<i class="fa-solid fa-circle-exclamation mr-1"></i> Isi Nama Siswa dan Kelas terlebih dahulu.';
+    return;
+  }
+
+  const payload = {
+    type: 'lkpd',
+    nama: name,
+    kelas: klass,
+    ipPrivate: document.getElementById('lkpd-ip-private').value.trim(),
+    ipPublic: document.getElementById('lkpd-ip-public').value.trim(),
+    urlUji: document.getElementById('lkpd-url1').value.trim(),
+    statusKeamanan: document.getElementById('lkpd-url1-sec').value,
+    catatanURL: document.getElementById('lkpd-url1-note').value.trim(),
+    analisisSkenario: document.getElementById('lkpd-scenario').value.trim(),
+    kesimpulan: document.getElementById('lkpd-conclusion').value.trim(),
+    timestamp: new Date().toISOString()
+  };
+
+  sendToGoogleDrive(payload, 'lkpd-feedback');
+});
+</script>
+
+</body>
+</html>
